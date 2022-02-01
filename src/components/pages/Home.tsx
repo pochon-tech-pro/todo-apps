@@ -13,13 +13,9 @@ type Task = { id: string; title: string; complete: boolean };
 
 const dummy: Task[] = [
   { id: 'AAAA', title: 'Task1', complete: false },
-  { id: 'BBBB', title: 'Task2', complete: false },
+  { id: 'BBBB', title: 'Task2', complete: true },
   { id: 'CCCC', title: 'Task3', complete: false },
 ];
-
-const dummyCheckList = dummy.reduce((acc, cur) => {
-  return { ...acc, [cur.id]: cur.complete };
-}, {} as { [key: Task['id']]: boolean });
 
 const useStyles = makeStyles({
   item: {
@@ -32,8 +28,9 @@ const useStyles = makeStyles({
 
 export const Home: VFC = () => {
   const [tasks, setTasks] = useState<Task[]>(dummy);
+  const [filteredTasks, setFilteredTasks] = useState<Task[]>(dummy);
+  const [isFiltered, setIsFiltered] = useState(false);
   const [input, setInput] = useState('');
-  const [check, setCheck] = useState(dummyCheckList);
   const classes = useStyles();
 
   const addTask = (e: MouseEvent<HTMLButtonElement>) => {
@@ -47,46 +44,100 @@ export const Home: VFC = () => {
         complete: false,
       },
     ]);
-    setCheck({ ...check, [id]: false });
+  };
+
+  const onlyUnCompleteTasks = () => {
+    setIsFiltered(!isFiltered);
+    setFilteredTasks(tasks.filter((item) => !item.complete));
   };
 
   return (
     <SRoot>
       <h1>タスク管理</h1>
-      <FormControl>
-        <TextField
-          value={input}
-          onChange={(event: ChangeEvent<HTMLInputElement>) =>
-            setInput(event.target.value)
-          }
-        />
-      </FormControl>
-      <SButton onClick={addTask} disabled={input === ''}>
-        タスク追加
-      </SButton>
+      <div>
+        <FormControl>
+          <TextField
+            value={input}
+            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+              setInput(event.target.value)
+            }
+          />
+        </FormControl>
+        <SButton onClick={addTask} disabled={input === ''}>
+          タスク追加
+        </SButton>
+      </div>
+      {isFiltered ? (
+        <button
+          style={{ margin: '10px' }}
+          onClick={() => setIsFiltered(!isFiltered)}
+        >
+          完了も表示
+        </button>
+      ) : (
+        <button style={{ margin: '10px' }} onClick={onlyUnCompleteTasks}>
+          未完了のみ表示
+        </button>
+      )}
+
       <FormGroup>
-        {tasks.map((item, idx) => {
-          {
-            console.log(check);
-          }
-          return (
-            <FormControlLabel
-              className={classes.item}
-              value={item.title}
-              control={
-                <Checkbox
-                  checked={check[item.id]}
-                  onChange={() => {
-                    console.log(item.id);
-                    setCheck({ ...check, [item.id]: !check[item.id] });
-                  }}
+        {isFiltered
+          ? filteredTasks.map((item, idx) => {
+              return (
+                <FormControlLabel
+                  className={classes.item}
+                  value={item.title}
+                  control={
+                    <Checkbox
+                      checked={item.complete}
+                      onChange={() => {
+                        setTasks(
+                          tasks.map((task, curIdx) =>
+                            curIdx === idx
+                              ? {
+                                  id: task.id,
+                                  title: task.title,
+                                  complete: !task.complete,
+                                }
+                              : task
+                          )
+                        );
+                      }}
+                    />
+                  }
+                  label={item.title}
+                  key={idx}
                 />
-              }
-              label={item.title}
-              key={idx}
-            />
-          );
-        })}
+              );
+            })
+          : tasks.map((item, idx) => {
+              return (
+                <FormControlLabel
+                  className={classes.item}
+                  value={item.title}
+                  control={
+                    <Checkbox
+                      checked={item.complete}
+                      onChange={() => {
+                        setTasks(
+                          tasks.map((task, curIdx) =>
+                            curIdx === idx
+                              ? {
+                                  id: task.id,
+                                  title: task.title,
+                                  complete: !task.complete,
+                                }
+                              : task
+                          )
+                        );
+                      }}
+                    />
+                  }
+                  label={item.title}
+                  key={idx}
+                />
+              );
+            })}
       </FormGroup>
     </SRoot>
   );
