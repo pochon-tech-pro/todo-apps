@@ -4,6 +4,8 @@ import './theme/index.css';
 import reportWebVitals from './reportWebVitals';
 import { Home } from './components/pages/Home';
 
+console.log(process.env.REACT_APP_TEST);
+
 ReactDOM.render(
   <React.StrictMode>
     <Home />
