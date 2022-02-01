@@ -38,14 +38,16 @@ export const Home: VFC = () => {
 
   const addTask = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    const id = Math.random().toString(32).substring(2);
     setTasks([
       ...tasks,
       {
-        id: Math.random().toString(32).substring(2),
+        id: id,
         title: input,
         complete: false,
       },
     ]);
+    setCheck({ ...check, [id]: false });
   };
 
   return (
@@ -64,16 +66,20 @@ export const Home: VFC = () => {
       </SButton>
       <FormGroup>
         {tasks.map((item, idx) => {
+          {
+            console.log(check);
+          }
           return (
             <FormControlLabel
               className={classes.item}
-              value={check[item.id]}
+              value={item.title}
               control={
                 <Checkbox
                   checked={check[item.id]}
-                  onChange={() =>
-                    setCheck({ ...check, [item.id]: !check[item.id] })
-                  }
+                  onChange={() => {
+                    console.log(item.id);
+                    setCheck({ ...check, [item.id]: !check[item.id] });
+                  }}
                 />
               }
               label={item.title}
@@ -101,6 +107,7 @@ const SButton = styled.button`
   border-radius: 8px; // 角を丸く
   cursor: pointer;
   font-weight: bolder;
+
   &:disabled {
     background-color: gray;
     color: aliceblue;
