@@ -1,0 +1,11 @@
+overwrite: true
+schema:
+  - ${REACT_APP_HASURA_ENDPOINT}:
+      headers:
+        x-hasura-admin-secret: ${REACT_APP_HASURA_ADMIN_SECRET}
+generates:
+  types/generated/graphql.tsx:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-react-apollo"
