@@ -8,6 +8,9 @@ import {
   makeStyles,
   TextField,
 } from '@material-ui/core';
+import { useQuery } from '@apollo/client';
+import { GET_TASKS } from '../../queries/queries';
+import { Tasks } from '../../types/generated/graphql'; // __typename から推測する
 
 type Task = { id: string; title: string; complete: boolean };
 
@@ -27,6 +30,11 @@ const useStyles = makeStyles({
 });
 
 export const Home: VFC = () => {
+  const { data, error } = useQuery<Tasks>(GET_TASKS, {
+    fetchPolicy: 'cache-and-network',
+  });
+  console.log(data);
+
   const [tasks, setTasks] = useState<Task[]>(dummy);
   const [filteredTasks, setFilteredTasks] = useState<Task[]>(dummy);
   const [isFiltered, setIsFiltered] = useState(false);

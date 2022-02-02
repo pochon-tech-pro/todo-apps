@@ -3,13 +3,15 @@ import ReactDOM from 'react-dom';
 import './theme/index.css';
 import reportWebVitals from './reportWebVitals';
 import { Home } from './components/pages/Home';
-
-console.log(process.env.REACT_APP_TEST);
+import { ApolloProvider } from '@apollo/client';
+import client from './apolloClient';
 
 ReactDOM.render(
-  <React.StrictMode>
-    <Home />
-  </React.StrictMode>,
+  <ApolloProvider client={client}>
+    <React.StrictMode>
+      <Home />
+    </React.StrictMode>
+  </ApolloProvider>,
   document.getElementById('root')
 );
 

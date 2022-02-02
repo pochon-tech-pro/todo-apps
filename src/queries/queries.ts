@@ -7,7 +7,6 @@ export const GET_TASKS = gql`
       title
       complete
       created_at
-      updated_at
     }
   }
 `;
