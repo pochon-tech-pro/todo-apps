@@ -1,4 +1,4 @@
-import { ChangeEvent, MouseEvent, useEffect, useState, VFC } from 'react';
+import { ChangeEvent, useEffect, useState, VFC } from 'react';
 import styled from 'styled-components';
 import {
   Checkbox,
@@ -36,7 +36,10 @@ export const Home: VFC = () => {
   const [input, setInput] = useState('');
   const classes = useStyles();
 
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
+    setLoading(true);
     if (data !== undefined) {
       const tasks: Task[] = data.tasks.map((item) => ({
         id: item.id,
@@ -45,6 +48,7 @@ export const Home: VFC = () => {
       }));
       setTasks(tasks);
       setFilteredTasks(tasks);
+      setLoading(false);
     }
   }, [data]);
 
@@ -93,78 +97,84 @@ export const Home: VFC = () => {
           タスク追加
         </SButton>
       </div>
-      {isFiltered ? (
-        <SButton2
-          style={{ margin: '10px' }}
-          onClick={() => setIsFiltered(!isFiltered)}
-        >
-          完了も表示
-        </SButton2>
-      ) : (
-        <SButton2 style={{ margin: '10px' }} onClick={onlyUnCompleteTasks}>
-          未完了のみ表示
-        </SButton2>
-      )}
 
-      <FormGroup>
-        {isFiltered
-          ? filteredTasks.map((item, idx) => {
-              return (
-                <FormControlLabel
-                  className={classes.item}
-                  value={item.title}
-                  control={
-                    <Checkbox
-                      checked={item.complete}
-                      onChange={() => {
-                        setTasks(
-                          tasks.map((task, curIdx) =>
-                            curIdx === idx
-                              ? {
-                                  id: task.id,
-                                  title: task.title,
-                                  complete: !task.complete,
-                                }
-                              : task
-                          )
-                        );
-                      }}
+      {loading ? (
+        <div>is Loading ....</div>
+      ) : (
+        <>
+          {isFiltered ? (
+            <SButton2
+              style={{ margin: '10px' }}
+              onClick={() => setIsFiltered(!isFiltered)}
+            >
+              完了も表示
+            </SButton2>
+          ) : (
+            <SButton2 style={{ margin: '10px' }} onClick={onlyUnCompleteTasks}>
+              未完了のみ表示
+            </SButton2>
+          )}
+          <FormGroup>
+            {isFiltered
+              ? filteredTasks.map((item, idx) => {
+                  return (
+                    <FormControlLabel
+                      className={classes.item}
+                      value={item.title}
+                      control={
+                        <Checkbox
+                          checked={item.complete}
+                          onChange={() => {
+                            setTasks(
+                              tasks.map((task, curIdx) =>
+                                curIdx === idx
+                                  ? {
+                                      id: task.id,
+                                      title: task.title,
+                                      complete: !task.complete,
+                                    }
+                                  : task
+                              )
+                            );
+                          }}
+                        />
+                      }
+                      label={item.title}
+                      key={idx}
                     />
-                  }
-                  label={item.title}
-                  key={idx}
-                />
-              );
-            })
-          : tasks.map((item, idx) => {
-              return (
-                <FormControlLabel
-                  className={classes.item}
-                  value={item.title}
-                  control={
-                    <Checkbox
-                      checked={item.complete}
-                      onChange={() => {
-                        setTasks(
-                          tasks.map((task, curIdx) =>
-                            curIdx === idx
-                              ? {
-                                  id: task.id,
-                                  title: task.title,
-                                  complete: !task.complete,
-                                }
-                              : task
-                          )
-                        );
-                      }}
+                  );
+                })
+              : tasks.map((item, idx) => {
+                  return (
+                    <FormControlLabel
+                      className={classes.item}
+                      value={item.title}
+                      control={
+                        <Checkbox
+                          checked={item.complete}
+                          onChange={() => {
+                            setTasks(
+                              tasks.map((task, curIdx) =>
+                                curIdx === idx
+                                  ? {
+                                      id: task.id,
+                                      title: task.title,
+                                      complete: !task.complete,
+                                    }
+                                  : task
+                              )
+                            );
+                          }}
+                        />
+                      }
+                      label={item.title}
+                      key={idx}
                     />
-                  }
-                  label={item.title}
-                  key={idx}
-                />
-              );
-            })}
-      </FormGroup>
+                  );
+                })}
+          </FormGroup>
+        </>
+      )}
     </SRoot>
   );
 };
