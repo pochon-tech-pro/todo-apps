@@ -86,16 +86,16 @@ export const Home: VFC = () => {
         </SButton>
       </div>
       {isFiltered ? (
-        <button
+        <SButton2
           style={{ margin: '10px' }}
           onClick={() => setIsFiltered(!isFiltered)}
         >
           完了も表示
-        </button>
+        </SButton2>
       ) : (
-        <button style={{ margin: '10px' }} onClick={onlyUnCompleteTasks}>
+        <SButton2 style={{ margin: '10px' }} onClick={onlyUnCompleteTasks}>
           未完了のみ表示
-        </button>
+        </SButton2>
       )}
 
       <FormGroup>
@@ -182,4 +182,15 @@ const SButton = styled.button`
     color: aliceblue;
     cursor: default;
   }
+`;
+
+const SButton2 = styled.button`
+  background-color: gray;
+  color: aliceblue;
+  border: none; // 枠線なくす
+  padding: 8px; // 中に余白をつける
+  margin: 0 0 0 10px;
+  border-radius: 8px; // 角を丸く
+  cursor: pointer;
+  font-weight: bolder;
 `;
