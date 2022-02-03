@@ -1,39 +1,33 @@
 import { ChangeEvent, useEffect, useState, VFC } from 'react';
 import styled from 'styled-components';
 import {
-  Checkbox,
   FormControl,
-  FormControlLabel,
-  makeStyles,
   TextField,
 } from '@material-ui/core';
 import { useMutation, useQuery } from '@apollo/client';
-import {CREATE_TASK, GET_TASKS, UPDATE_TASK_COMPLETE} from '../../queries/queries';
+import {
+  CREATE_TASK,
+  GET_TASKS,
+  UPDATE_TASK_COMPLETE,
+} from '../../queries/queries';
 import {
   CreateTaskMutation,
-  GetTasksQuery, UpdateTaskCompleteMutation,
+  GetTasksQuery,
+  UpdateTaskCompleteMutation,
 } from '../../types/generated/graphql';
 import { TaskTable } from '../organisims/TaskTable';
-import { Task } from '../../types/task'; // __typename から推測する
-
-const useStyles = makeStyles({
-  item: {
-    color: 'gray',
-    fontFamily: 'serif',
-    margin: '0 auto',
-    padding: '10px',
-  },
-});
+import { Task } from '../../types/task';
+import { TaskRow } from '../molecules/TaskRow';
 
 export const Home: VFC = () => {
   const { data, error } = useQuery<GetTasksQuery>(GET_TASKS, {
     fetchPolicy: 'cache-and-network',
   });
+
   const [tasks, setTasks] = useState<Task[]>([]);
   const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
   const [isFiltered, setIsFiltered] = useState(false);
   const [input, setInput] = useState('');
-  const classes = useStyles();
 
   const [loading, setLoading] = useState(false);
 
@@ -75,15 +69,16 @@ export const Home: VFC = () => {
     setInput('');
   };
 
-  const [update_task_complete_by_pk] = useMutation<UpdateTaskCompleteMutation>(UPDATE_TASK_COMPLETE);
+  const [update_task_complete_by_pk] =
+    useMutation<UpdateTaskCompleteMutation>(UPDATE_TASK_COMPLETE);
   const changeComplete = async (target: Task) => {
     await update_task_complete_by_pk({
       variables: {
         id: target.id,
-        complete: !target.complete
-      }
+        complete: !target.complete,
+      },
     });
-  }
+  };
 
   const onlyUnCompleteTasks = () => {
     setIsFiltered(!isFiltered);
@@ -127,33 +122,19 @@ export const Home: VFC = () => {
             {isFiltered
               ? filteredTasks.map((item, idx) => {
                   return (
-                    <FormControlLabel
-                      className={classes.item}
-                      value={item.title}
-                      control={
-                        <Checkbox
-                          checked={item.complete}
-                          onChange={() => changeComplete(item)}
-                        />
-                      }
-                      label={item.title}
+                    <TaskRow
                       key={idx}
+                      task={item}
+                      changeComplete={changeComplete}
                     />
                   );
                 })
               : tasks.map((item, idx) => {
                   return (
-                    <FormControlLabel
-                      className={classes.item}
-                      value={item.title}
-                      control={
-                        <Checkbox
-                          checked={item.complete}
-                          onChange={() => changeComplete(item)}
-                        />
-                      }
-                      label={item.title}
+                    <TaskRow
                       key={idx}
+                      task={item}
+                      changeComplete={changeComplete}
                     />
                   );
                 })}
