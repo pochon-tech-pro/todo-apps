@@ -4,18 +4,17 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
-  FormGroup,
   makeStyles,
   TextField,
 } from '@material-ui/core';
 import { useMutation, useQuery } from '@apollo/client';
-import { CREATE_TASK, GET_TASKS } from '../../queries/queries';
+import {CREATE_TASK, GET_TASKS, UPDATE_TASK_COMPLETE} from '../../queries/queries';
 import {
   CreateTaskMutation,
-  GetTasksQuery,
-} from '../../types/generated/graphql'; // __typename から推測する
-
-type Task = { id: string; title: string; complete: boolean };
+  GetTasksQuery, UpdateTaskCompleteMutation,
+} from '../../types/generated/graphql';
+import { TaskTable } from '../organisims/TaskTable';
+import { Task } from '../../types/task'; // __typename から推測する
 
 const useStyles = makeStyles({
   item: {
@@ -76,6 +75,16 @@ export const Home: VFC = () => {
     setInput('');
   };
 
+  const [update_task_complete_by_pk] = useMutation<UpdateTaskCompleteMutation>(UPDATE_TASK_COMPLETE);
+  const changeComplete = async (target: Task) => {
+    await update_task_complete_by_pk({
+      variables: {
+        id: target.id,
+        complete: !target.complete
+      }
+    });
+  }
+
   const onlyUnCompleteTasks = () => {
     setIsFiltered(!isFiltered);
     setFilteredTasks(tasks.filter((item) => !item.complete));
@@ -114,7 +123,7 @@ export const Home: VFC = () => {
               未完了のみ表示
             </SButton2>
           )}
-          <FormGroup>
+          <TaskTable>
             {isFiltered
               ? filteredTasks.map((item, idx) => {
                   return (
@@ -124,19 +133,7 @@ export const Home: VFC = () => {
                       control={
                         <Checkbox
                           checked={item.complete}
-                          onChange={() => {
-                            setTasks(
-                              tasks.map((task, curIdx) =>
-                                curIdx === idx
-                                  ? {
-                                      id: task.id,
-                                      title: task.title,
-                                      complete: !task.complete,
-                                    }
-                                  : task
-                              )
-                            );
-                          }}
+                          onChange={() => changeComplete(item)}
                         />
                       }
                       label={item.title}
@@ -152,19 +149,7 @@ export const Home: VFC = () => {
                       control={
                         <Checkbox
                           checked={item.complete}
-                          onChange={() => {
-                            setTasks(
-                              tasks.map((task, curIdx) =>
-                                curIdx === idx
-                                  ? {
-                                      id: task.id,
-                                      title: task.title,
-                                      complete: !task.complete,
-                                    }
-                                  : task
-                              )
-                            );
-                          }}
+                          onChange={() => changeComplete(item)}
                         />
                       }
                       label={item.title}
@@ -172,7 +157,7 @@ export const Home: VFC = () => {
                     />
                   );
                 })}
-          </FormGroup>
+          </TaskTable>
         </>
       )}
     </SRoot>

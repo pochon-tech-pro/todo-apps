@@ -35,3 +35,11 @@ export const UPDATE_TASK = gql`
     }
   }
 `;
+export const UPDATE_TASK_COMPLETE = gql`
+  mutation UpdateTaskComplete($id: uuid!, $complete: Boolean!) {
+    update_tasks_by_pk(pk_columns: { id: $id }, _set: { complete: $complete }) {
+      id
+      complete
+    }
+  }
+`;

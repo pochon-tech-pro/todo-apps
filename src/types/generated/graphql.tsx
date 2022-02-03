@@ -631,6 +631,14 @@ export type UpdateTaskMutationVariables = Exact<{
 
 export type UpdateTaskMutation = { __typename?: 'mutation_root', update_tasks_by_pk?: { __typename?: 'tasks', id: any, title: string } | null };
 
+export type UpdateTaskCompleteMutationVariables = Exact<{
+  id: Scalars['uuid'];
+  complete: Scalars['Boolean'];
+}>;
+
+
+export type UpdateTaskCompleteMutation = { __typename?: 'mutation_root', update_tasks_by_pk?: { __typename?: 'tasks', id: any, complete: boolean } | null };
+
 
 export const GetTasksDocument = gql`
     query GetTasks {
@@ -773,3 +781,38 @@ export function useUpdateTaskMutation(baseOptions?: Apollo.MutationHookOptions<U
 export type UpdateTaskMutationHookResult = ReturnType<typeof useUpdateTaskMutation>;
 export type UpdateTaskMutationResult = Apollo.MutationResult<UpdateTaskMutation>;
 export type UpdateTaskMutationOptions = Apollo.BaseMutationOptions<UpdateTaskMutation, UpdateTaskMutationVariables>;
+export const UpdateTaskCompleteDocument = gql`
+    mutation UpdateTaskComplete($id: uuid!, $complete: Boolean!) {
+  update_tasks_by_pk(pk_columns: {id: $id}, _set: {complete: $complete}) {
+    id
+    complete
+  }
+}
+    `;
+export type UpdateTaskCompleteMutationFn = Apollo.MutationFunction<UpdateTaskCompleteMutation, UpdateTaskCompleteMutationVariables>;
+
+/**
+ * __useUpdateTaskCompleteMutation__
+ *
+ * To run a mutation, you first call `useUpdateTaskCompleteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateTaskCompleteMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateTaskCompleteMutation, { data, loading, error }] = useUpdateTaskCompleteMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      complete: // value for 'complete'
+ *   },
+ * });
+ */
+export function useUpdateTaskCompleteMutation(baseOptions?: Apollo.MutationHookOptions<UpdateTaskCompleteMutation, UpdateTaskCompleteMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateTaskCompleteMutation, UpdateTaskCompleteMutationVariables>(UpdateTaskCompleteDocument, options);
+      }
+export type UpdateTaskCompleteMutationHookResult = ReturnType<typeof useUpdateTaskCompleteMutation>;
+export type UpdateTaskCompleteMutationResult = Apollo.MutationResult<UpdateTaskCompleteMutation>;
+export type UpdateTaskCompleteMutationOptions = Apollo.BaseMutationOptions<UpdateTaskCompleteMutation, UpdateTaskCompleteMutationVariables>;
