@@ -1,10 +1,4 @@
-import {
-  ChangeEvent,
-  MouseEvent,
-  useEffect,
-  useState,
-  VFC,
-} from 'react';
+import { ChangeEvent, MouseEvent, useEffect, useState, VFC } from 'react';
 import styled from 'styled-components';
 import {
   Checkbox,
@@ -14,9 +8,12 @@ import {
   makeStyles,
   TextField,
 } from '@material-ui/core';
-import { useQuery } from '@apollo/client';
-import { GET_TASKS } from '../../queries/queries';
-import { Tasks } from '../../types/generated/graphql'; // __typename から推測する
+import { useMutation, useQuery } from '@apollo/client';
+import { CREATE_TASK, GET_TASKS } from '../../queries/queries';
+import {
+  CreateTaskMutation,
+  GetTasksQuery,
+} from '../../types/generated/graphql'; // __typename から推測する
 
 type Task = { id: string; title: string; complete: boolean };
 
@@ -30,7 +27,7 @@ const useStyles = makeStyles({
 });
 
 export const Home: VFC = () => {
-  const { data, error } = useQuery<{ tasks: Tasks[] }>(GET_TASKS, {
+  const { data, error } = useQuery<GetTasksQuery>(GET_TASKS, {
     fetchPolicy: 'cache-and-network',
   });
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -51,17 +48,28 @@ export const Home: VFC = () => {
     }
   }, [data]);
 
-  const addTask = (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    const id = Math.random().toString(32).substring(2);
-    setTasks([
-      ...tasks,
-      {
-        id: id,
+  const [insert_tasks_one] = useMutation<CreateTaskMutation>(CREATE_TASK, {
+    // @ts-ignore
+    update(cache, { data: { insert_tasks_one } }) {
+      // TODO: Cache周りの整理
+      const cacheId: string = cache.identify(insert_tasks_one) ?? '';
+      cache.modify({
+        fields: {
+          tasks(existingTasks, { toReference }) {
+            return [toReference(cacheId), ...existingTasks];
+          },
+        },
+      });
+    },
+  });
+
+  const addTask = async () => {
+    await insert_tasks_one({
+      variables: {
         title: input,
-        complete: false,
       },
-    ]);
+    });
+    setInput('');
   };
 
   const onlyUnCompleteTasks = () => {
