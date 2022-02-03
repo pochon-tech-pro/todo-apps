@@ -85,6 +85,7 @@ export const Home: VFC = () => {
     setFilteredTasks(tasks.filter((item) => !item.complete));
   };
 
+  if (error) return <div>Error</div>
   return (
     <SRoot>
       <h1>タスク管理</h1>
