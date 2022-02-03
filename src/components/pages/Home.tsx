@@ -1,4 +1,10 @@
-import { ChangeEvent, MouseEvent, useState, VFC } from 'react';
+import {
+  ChangeEvent,
+  MouseEvent,
+  useEffect,
+  useState,
+  VFC,
+} from 'react';
 import styled from 'styled-components';
 import {
   Checkbox,
@@ -14,12 +20,6 @@ import { Tasks } from '../../types/generated/graphql'; // __typename から推�
 
 type Task = { id: string; title: string; complete: boolean };
 
-const dummy: Task[] = [
-  { id: 'AAAA', title: 'Task1', complete: false },
-  { id: 'BBBB', title: 'Task2', complete: true },
-  { id: 'CCCC', title: 'Task3', complete: false },
-];
-
 const useStyles = makeStyles({
   item: {
     color: 'gray',
@@ -30,16 +30,26 @@ const useStyles = makeStyles({
 });
 
 export const Home: VFC = () => {
-  const { data, error } = useQuery<Tasks>(GET_TASKS, {
+  const { data, error } = useQuery<{ tasks: Tasks[] }>(GET_TASKS, {
     fetchPolicy: 'cache-and-network',
   });
-  console.log(data);
-
-  const [tasks, setTasks] = useState<Task[]>(dummy);
-  const [filteredTasks, setFilteredTasks] = useState<Task[]>(dummy);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
   const [isFiltered, setIsFiltered] = useState(false);
   const [input, setInput] = useState('');
   const classes = useStyles();
+
+  useEffect(() => {
+    if (data !== undefined) {
+      const tasks: Task[] = data.tasks.map((item) => ({
+        id: item.id,
+        title: item.title,
+        complete: item.complete,
+      }));
+      setTasks(tasks);
+      setFilteredTasks(tasks);
+    }
+  }, [data]);
 
   const addTask = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
