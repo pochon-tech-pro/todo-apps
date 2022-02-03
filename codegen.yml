@@ -3,6 +3,7 @@ schema:
   - ${REACT_APP_HASURA_ENDPOINT}:
       headers:
         x-hasura-admin-secret: ${REACT_APP_HASURA_ADMIN_SECRET}
+documents: src/queries/**/*.ts
 generates:
   src/types/generated/graphql.tsx:
     plugins:
