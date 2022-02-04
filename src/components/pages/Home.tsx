@@ -1,9 +1,6 @@
 import { ChangeEvent, useEffect, useState, VFC } from 'react';
 import styled from 'styled-components';
-import {
-  FormControl,
-  TextField,
-} from '@material-ui/core';
+import { FormControl, TextField } from '@material-ui/core';
 import { useMutation, useQuery } from '@apollo/client';
 import {
   CREATE_TASK,
@@ -18,6 +15,7 @@ import {
 import { TaskTable } from '../organisims/TaskTable';
 import { Task } from '../../types/task';
 import { TaskRow } from '../molecules/TaskRow';
+import { Layout } from '../templates/Layout';
 
 export const Home: VFC = () => {
   const { data, error } = useQuery<GetTasksQuery>(GET_TASKS, {
@@ -85,10 +83,9 @@ export const Home: VFC = () => {
     setFilteredTasks(tasks.filter((item) => !item.complete));
   };
 
-  if (error) return <div>Error</div>
+  if (error) return <div>Error</div>;
   return (
-    <SRoot>
-      <h1>タスク管理</h1>
+    <Layout title={'タスク管理'}>
       <div>
         <FormControl>
           <TextField
@@ -142,15 +139,9 @@ export const Home: VFC = () => {
           </TaskTable>
         </>
       )}
-    </SRoot>
+    </Layout>
   );
 };
-
-const SRoot = styled.div`
-  text-align: center;
-  color: gray;
-  font-family: serif;
-`;
 
 const SButton = styled.button`
   background-color: brown;

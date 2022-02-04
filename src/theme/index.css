@@ -1,5 +1,6 @@
 body {
-  margin: 0;
+  margin: 0; /** HeaderやFooterのために、余分な外側余白消す **/
+  min-height: 100vh; /** 画面の最小の縦の大きさ制限 (画面の大きさMAX。FooterでBottom0のための準備) **/
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
