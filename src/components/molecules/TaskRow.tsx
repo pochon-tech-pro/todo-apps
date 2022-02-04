@@ -1,5 +1,5 @@
 import { memo, VFC } from 'react';
-import { Checkbox, FormControlLabel, makeStyles } from '@material-ui/core';
+import {Checkbox, TableCell, TableRow} from '@material-ui/core';
 import { Task } from '../../types/task';
 import styled from "styled-components";
 
@@ -11,35 +11,21 @@ type Props = {
 
 export const TaskRow: VFC<Props> = memo(
   ({ task, changeComplete, deleteTask }) => {
-    const classes = useStyles();
-
     return (
-      <>
-        <FormControlLabel
-          className={classes.item}
-          value={task.title}
-          control={
-            <Checkbox
-              checked={task.complete}
-              onChange={() => changeComplete(task)}
-            />
-          }
-          label={task.title}
-        />
-        <SButton2 onClick={() => deleteTask(task)}>削除</SButton2>
-      </>
+      <TableRow>
+          <TableCell>
+              {task.title}
+          </TableCell>
+          <TableCell>
+              <Checkbox checked={task.complete} onChange={() => changeComplete(task)} />
+          </TableCell>
+          <TableCell>
+              <SButton2 onClick={() => deleteTask(task)}>削除</SButton2>
+          </TableCell>
+      </TableRow>
     );
   }
 );
-
-const useStyles = makeStyles({
-  item: {
-    color: 'gray',
-    fontFamily: 'serif',
-    margin: '0 auto',
-    padding: '10px',
-  },
-});
 
 const SButton2 = styled.button`
   background-color: gray;
