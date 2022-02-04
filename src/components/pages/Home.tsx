@@ -4,11 +4,13 @@ import { FormControl, TextField } from '@material-ui/core';
 import { useMutation, useQuery } from '@apollo/client';
 import {
   CREATE_TASK,
+  DELETE_TASK,
   GET_TASKS,
   UPDATE_TASK_COMPLETE,
 } from '../../queries/queries';
 import {
   CreateTaskMutation,
+  DeleteTaskMutation,
   GetTasksQuery,
   UpdateTaskCompleteMutation,
 } from '../../types/generated/graphql';
@@ -57,7 +59,6 @@ export const Home: VFC = () => {
       });
     },
   });
-
   const addTask = async () => {
     await insert_tasks_one({
       variables: {
@@ -77,6 +78,29 @@ export const Home: VFC = () => {
       },
     });
   };
+
+  const [delete_tasks_by_pk] = useMutation<DeleteTaskMutation>(DELETE_TASK, {
+    // @ts-ignore
+    update(cache, { data: { delete_tasks_by_pk } }) {
+      cache.modify({
+        fields: {
+          tasks(existingTasks, { readField }) {
+            return existingTasks.filter(
+              // @ts-ignore
+              (task) => delete_tasks_by_pk.id !== readField('id', task)
+            );
+          },
+        },
+      });
+    },
+  });
+  const deleteTask = async (target: Task) => {
+    await delete_tasks_by_pk({
+      variables: {
+        id: target.id,
+      }
+    })
+  }
 
   const onlyUnCompleteTasks = () => {
     setIsFiltered(!isFiltered);
@@ -124,6 +148,7 @@ export const Home: VFC = () => {
                       key={idx}
                       task={item}
                       changeComplete={changeComplete}
+                      deleteTask={deleteTask}
                     />
                   );
                 })
@@ -133,6 +158,7 @@ export const Home: VFC = () => {
                       key={idx}
                       task={item}
                       changeComplete={changeComplete}
+                      deleteTask={deleteTask}
                     />
                   );
                 })}
