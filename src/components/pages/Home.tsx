@@ -60,23 +60,27 @@ export const Home: VFC = () => {
     },
   });
   const addTask = async () => {
+    setLoading(true);
     await insert_tasks_one({
       variables: {
         title: input,
       },
     });
     setInput('');
+    setLoading(false);
   };
 
   const [update_task_complete_by_pk] =
     useMutation<UpdateTaskCompleteMutation>(UPDATE_TASK_COMPLETE);
   const changeComplete = async (target: Task) => {
+    setLoading(true);
     await update_task_complete_by_pk({
       variables: {
         id: target.id,
         complete: !target.complete,
       },
     });
+    setLoading(false);
   };
 
   const [delete_tasks_by_pk] = useMutation<DeleteTaskMutation>(DELETE_TASK, {
@@ -95,12 +99,14 @@ export const Home: VFC = () => {
     },
   });
   const deleteTask = async (target: Task) => {
+    setLoading(true);
     await delete_tasks_by_pk({
       variables: {
         id: target.id,
-      }
-    })
-  }
+      },
+    });
+    setLoading(false);
+  };
 
   const onlyUnCompleteTasks = () => {
     setIsFiltered(!isFiltered);
@@ -124,47 +130,54 @@ export const Home: VFC = () => {
         </SButton>
       </div>
 
-      {loading ? (
-        <div>is Loading ....</div>
-      ) : (
-        <>
-          {isFiltered ? (
-            <SButton2
-              style={{ margin: '10px' }}
-              onClick={() => setIsFiltered(!isFiltered)}
-            >
-              完了も表示
-            </SButton2>
-          ) : (
-            <SButton2 style={{ margin: '10px' }} onClick={onlyUnCompleteTasks}>
-              未完了のみ表示
-            </SButton2>
-          )}
-          <TaskTable>
-            {isFiltered
-              ? filteredTasks.map((item, idx) => {
-                  return (
-                    <TaskRow
-                      key={idx}
-                      task={item}
-                      changeComplete={changeComplete}
-                      deleteTask={deleteTask}
-                    />
-                  );
-                })
-              : tasks.map((item, idx) => {
-                  return (
-                    <TaskRow
-                      key={idx}
-                      task={item}
-                      changeComplete={changeComplete}
-                      deleteTask={deleteTask}
-                    />
-                  );
-                })}
-          </TaskTable>
-        </>
-      )}
+      <div style={loading ? { opacity: '0.3', pointerEvents: 'none' } : {}}>
+        {isFiltered ? (
+          <SButton2
+            style={{
+              margin: '10px',
+              display: 'flex',
+              justifyContent: 'flex-end',
+            }}
+            onClick={() => setIsFiltered(!isFiltered)}
+          >
+            完了も表示
+          </SButton2>
+        ) : (
+          <SButton2
+            style={{
+              margin: '10px',
+              display: 'flex',
+              justifyContent: 'flex-end',
+            }}
+            onClick={onlyUnCompleteTasks}
+          >
+            未完了のみ表示
+          </SButton2>
+        )}
+        <TaskTable>
+          {isFiltered
+            ? filteredTasks.map((item, idx) => {
+                return (
+                  <TaskRow
+                    key={idx}
+                    task={item}
+                    changeComplete={changeComplete}
+                    deleteTask={deleteTask}
+                  />
+                );
+              })
+            : tasks.map((item, idx) => {
+                return (
+                  <TaskRow
+                    key={idx}
+                    task={item}
+                    changeComplete={changeComplete}
+                    deleteTask={deleteTask}
+                  />
+                );
+              })}
+        </TaskTable>
+      </div>
     </Layout>
   );
 };
