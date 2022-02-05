@@ -30,6 +30,7 @@ export const TaskTable: VFC<Props> = memo(({ children }) => {
         <TableHead style={{ backgroundColor: 'gray', color: 'aliceblue' }}>
           <TableRow>
             <TableCell className={classes.headCell}>内容</TableCell>
+            <TableCell className={classes.headCell}>作成日時</TableCell>
             <TableCell className={classes.headCell}>未/済</TableCell>
             <TableCell className={classes.headCell}>削除</TableCell>
           </TableRow>

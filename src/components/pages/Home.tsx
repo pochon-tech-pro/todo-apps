@@ -38,6 +38,7 @@ export const Home: VFC = () => {
         id: item.id,
         title: item.title,
         complete: item.complete,
+        createdAt: item.created_at
       }));
       setTasks(tasks);
       setFilteredTasks(tasks);

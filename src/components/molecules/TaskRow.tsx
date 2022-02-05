@@ -2,6 +2,7 @@ import { memo, VFC } from 'react';
 import {Checkbox, TableCell, TableRow} from '@material-ui/core';
 import { Task } from '../../types/task';
 import styled from "styled-components";
+import {formatDateStringYMD} from "../../utils";
 
 type Props = {
   task: Task;
@@ -15,6 +16,9 @@ export const TaskRow: VFC<Props> = memo(
       <TableRow>
           <TableCell>
               {task.title}
+          </TableCell>
+          <TableCell>
+              {formatDateStringYMD(task.createdAt)}
           </TableCell>
           <TableCell>
               <Checkbox checked={task.complete} onChange={() => changeComplete(task)} />

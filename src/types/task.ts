@@ -1,1 +1,1 @@
-export type Task = { id: string; title: string; complete: boolean };
+export type Task = { id: string; title: string; complete: boolean; createdAt: string };
