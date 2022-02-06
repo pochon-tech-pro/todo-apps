@@ -16,7 +16,7 @@ export const TaskRow: VFC<Props> = memo(
     const [input, setInput] = useState('');
     useEffect(() => {
       setInput(task.title);
-    }, []);
+    }, [task.title]);
 
     return (
       <TableRow>
