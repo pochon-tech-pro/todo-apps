@@ -21,7 +21,11 @@ export const TaskRow: VFC<Props> = memo(
     return (
       <TableRow>
         <TableCell>
-          <TextField value={input} onChange={(e) => setInput(e.target.value)} />
+          <TextField
+            style={{width: "50vh"}}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+          />
           <SButton2
             onClick={() =>
               updateTask({
@@ -30,7 +34,7 @@ export const TaskRow: VFC<Props> = memo(
               })
             }
           >
-            更新する
+            更新
           </SButton2>
         </TableCell>
         <TableCell>{formatDateStringYMD(task.createdAt)}</TableCell>
