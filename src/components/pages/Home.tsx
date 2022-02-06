@@ -6,6 +6,7 @@ import {
   CREATE_TASK,
   DELETE_TASK,
   GET_TASKS,
+  UPDATE_TASK,
   UPDATE_TASK_COMPLETE,
 } from '../../queries/queries';
 import {
@@ -13,6 +14,7 @@ import {
   DeleteTaskMutation,
   GetTasksQuery,
   UpdateTaskCompleteMutation,
+  UpdateTaskMutation,
 } from '../../types/generated/graphql';
 import { TaskTable } from '../organisims/TaskTable';
 import { Task } from '../../types/task';
@@ -38,7 +40,7 @@ export const Home: VFC = () => {
         id: item.id,
         title: item.title,
         complete: item.complete,
-        createdAt: item.created_at
+        createdAt: item.created_at,
       }));
       setTasks(tasks);
       setFilteredTasks(tasks);
@@ -79,6 +81,18 @@ export const Home: VFC = () => {
       variables: {
         id: target.id,
         complete: !target.complete,
+      },
+    });
+    setLoading(false);
+  };
+
+  const [update_task_by_pk] = useMutation<UpdateTaskMutation>(UPDATE_TASK);
+  const updateTask = async (target: Task) => {
+    setLoading(true);
+    await update_task_by_pk({
+      variables: {
+        id: target.id,
+        title: target.title,
       },
     });
     setLoading(false);
@@ -163,6 +177,7 @@ export const Home: VFC = () => {
                     key={idx}
                     task={item}
                     changeComplete={changeComplete}
+                    updateTask={updateTask}
                     deleteTask={deleteTask}
                   />
                 );
@@ -173,6 +188,7 @@ export const Home: VFC = () => {
                     key={idx}
                     task={item}
                     changeComplete={changeComplete}
+                    updateTask={updateTask}
                     deleteTask={deleteTask}
                   />
                 );
