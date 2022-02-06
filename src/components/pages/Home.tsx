@@ -1,6 +1,5 @@
-import { ChangeEvent, useEffect, useState, VFC } from 'react';
+import { useEffect, useState, VFC } from 'react';
 import styled from 'styled-components';
-import { FormControl, TextField } from '@material-ui/core';
 import { useMutation, useQuery } from '@apollo/client';
 import {
   CREATE_TASK,
@@ -20,6 +19,7 @@ import { TaskTable } from '../organisims/TaskTable';
 import { Task } from '../../types/task';
 import { TaskRow } from '../molecules/TaskRow';
 import { Layout } from '../templates/Layout';
+import {TaskRegisterForm} from "../organisims/TaskRegisterForm";
 
 export const Home: VFC = () => {
   const { data, error } = useQuery<GetTasksQuery>(GET_TASKS, {
@@ -29,9 +29,8 @@ export const Home: VFC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
   const [isFiltered, setIsFiltered] = useState(false);
-  const [input, setInput] = useState('');
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // TODO: 複数ComponentにまたがるのでRecoilに移行予定
 
   useEffect(() => {
     setLoading(true);
@@ -62,14 +61,13 @@ export const Home: VFC = () => {
       });
     },
   });
-  const addTask = async () => {
+  const addTask = async (title: string) => {
     setLoading(true);
     await insert_tasks_one({
       variables: {
-        title: input,
+        title: title,
       },
     });
-    setInput('');
     setLoading(false);
   };
 
@@ -131,20 +129,7 @@ export const Home: VFC = () => {
   if (error) return <div>Error</div>;
   return (
     <Layout title={'タスク管理'}>
-      <div>
-        <FormControl>
-          <TextField
-            value={input}
-            onChange={(event: ChangeEvent<HTMLInputElement>) =>
-              setInput(event.target.value)
-            }
-          />
-        </FormControl>
-        <SButton onClick={addTask} disabled={input === ''}>
-          タスク追加
-        </SButton>
-      </div>
-
+      <TaskRegisterForm addTask={addTask} />
       <div style={loading ? { opacity: '0.3', pointerEvents: 'none' } : {}}>
         {isFiltered ? (
           <SButton2
@@ -198,23 +183,6 @@ export const Home: VFC = () => {
     </Layout>
   );
 };
-
-const SButton = styled.button`
-  background-color: brown;
-  color: aliceblue;
-  border: none; // 枠線なくす
-  padding: 8px; // 中に余白をつける
-  margin: 0 0 0 10px;
-  border-radius: 8px; // 角を丸く
-  cursor: pointer;
-  font-weight: bolder;
-
-  &:disabled {
-    background-color: gray;
-    color: aliceblue;
-    cursor: default;
-  }
-`;
 
 const SButton2 = styled.button`
   background-color: gray;
