@@ -20,8 +20,9 @@ export const TaskRegisterForm: VFC<Props> = ({ addTask }) => {
         />
       </FormControl>
       <SButton
-        onClick={() => {
-          addTask(input).then(() => setInput(''));
+        onClick={async () => {
+          await addTask(input);
+          setInput('');
         }}
         disabled={input === ''}
       >
