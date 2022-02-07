@@ -1,6 +1,6 @@
 import { FormControl, TextField } from '@material-ui/core';
 import { ChangeEvent, useState, VFC } from 'react';
-import styled from 'styled-components';
+import { AddButton } from '../atoms/AddButton';
 
 type Props = {
   addTask: (title: string) => Promise<void>;
@@ -8,6 +8,11 @@ type Props = {
 
 export const TaskRegisterForm: VFC<Props> = ({ addTask }) => {
   const [input, setInput] = useState('');
+
+  const registerTask = async () => {
+    await addTask(input);
+    setInput('');
+  };
 
   return (
     <div>
@@ -19,32 +24,9 @@ export const TaskRegisterForm: VFC<Props> = ({ addTask }) => {
           }
         />
       </FormControl>
-      <SButton
-        onClick={async () => {
-          await addTask(input);
-          setInput('');
-        }}
-        disabled={input === ''}
-      >
+      <AddButton handler={registerTask} disabled={input === ''}>
         タスク追加
-      </SButton>
+      </AddButton>
     </div>
   );
 };
-
-const SButton = styled.button`
-  background-color: brown;
-  color: aliceblue;
-  border: none; // 枠線なくす
-  padding: 8px; // 中に余白をつける
-  margin: 0 0 0 10px;
-  border-radius: 8px; // 角を丸く
-  cursor: pointer;
-  font-weight: bolder;
-
-  &:disabled {
-    background-color: gray;
-    color: aliceblue;
-    cursor: default;
-  }
-`;
